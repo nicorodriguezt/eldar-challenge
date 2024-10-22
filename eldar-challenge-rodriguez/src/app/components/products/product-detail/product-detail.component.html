@@ -1,0 +1,87 @@
+<app-nav-bar>
+    <div class="back-button-container">
+        <p-button icon="pi pi-arrow-left" [rounded]="true" [text]="true" (onClick)="goBack()" />
+    </div>
+</app-nav-bar>
+<div class="main-container">
+    <div class="flex justify-content-center align-items-center col-12 lg:col-10 xl:col-8">
+        <p-card [header]="id === 'create' ? 'Crear Producto' : 'Editar Producto'">
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+                <div class="grid">
+                    <div class="col-12 md:col-6 field">
+                        <label for="name">Nombre</label>
+                        <input pInputText class="w-full" id="name" formControlName="name" />
+                        @if(name.invalid && (name.dirty || name.touched)){
+                        <small class="block p-error">El nombre es requerido</small>
+                        }
+                    </div>
+                    <div class="col-12 md:col-6 field">
+                        <label for="cost">Precio</label>
+                        <input type="number" pInputText class="w-full" id="cost" formControlName="cost" />
+                        @if(cost.invalid && (cost.dirty || cost.touched)){
+                        <small class="block p-error">
+                            @if(cost.hasError('required')) {
+                            <span>El precio es requerido</span>
+                            } @else if(cost.hasError('min')) {
+                            <span>El precio debe ser mayor a 0</span>
+                            }
+                        </small>
+                        }
+                    </div>
+                    <div class="col-12 md:col-6 field">
+                        <label for="quantity">Cantidad</label>
+                        <input type="number" pInputText class="w-full" id="quantity" formControlName="quantity" />
+                        @if(quantity.invalid && (quantity.dirty || quantity.touched)){
+                        <small class="block p-error">
+                            @if(quantity.hasError('required')) {
+                            <span>La cantidad es requerida</span>
+                            } @else if(quantity.hasError('min')) {
+                            <span>La cantidad debe ser mayor o igual a 0</span>
+                            }
+                        </small>
+                        }
+                    </div>
+                    <div class="col-12 md:col-6 field">
+                        <label for="rate">Puntuación</label>
+                        <input type="number" pInputText class="w-full" id="rate" formControlName="rate" />
+                        @if(rate.invalid && (rate.dirty || rate.touched)){
+                        <small class="block p-error">
+                            @if(rate.hasError('required')) {
+                            <span>La puntuación es requerida</span>
+                            } @else if(rate.hasError('min') || rate.hasError('max')) {
+                            <span>La puntuación debe ser un valor entre 0 y 5</span>
+                            }
+                        </small>
+                        }
+                    </div>
+                    <div class="col-12 md:col-6 field">
+                        <label for="category">Categoría</label>
+                        <input pInputText class="w-full" id="category" formControlName="category" />
+                        @if(category.invalid && (category.dirty || category.touched)){
+                        <small class="block p-error">La categoría es requerida</small>
+                        }
+                    </div>
+                    <div class="col-12 md:col-6 field">
+                        <label for="imageUrl">Url de Imagen</label>
+                        <input type="url" pInputText class="w-full" id="imageUrl" formControlName="imageUrl" />
+                        @if(imageUrl.invalid && (imageUrl.dirty || imageUrl.touched)){
+                        <small class="block p-error">
+                            @if(imageUrl.hasError('required')) {
+                            <span>La imagen es requerida</span>
+                            } @else if(imageUrl.hasError('pattern')) {
+                            <span>Se debe ingresar una url valida</span>
+                            }
+                        </small>
+                        }
+                    </div>
+                    <div class="col-12">
+                        <div class="col-4 col-offset-4">
+                            <p-button type="submit" label="Guardar" styleClass="w-full"
+                                [disabled]="productForm.invalid"></p-button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </p-card>
+    </div>
+</div>

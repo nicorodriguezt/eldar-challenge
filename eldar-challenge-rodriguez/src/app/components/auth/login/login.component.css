@@ -1,0 +1,31 @@
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    text-align: center;
+    width: 350px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        text-align: left;
+    }
+}
+
+.full-width {
+    width: 100%;
+}
+
+.alignment {
+    text-align: left;
+}
+
+
+.button-container {
+    text-align: center;
+}

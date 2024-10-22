@@ -4,7 +4,7 @@ const jsonServer = require('json-server')
 const jwt = require('jsonwebtoken')
 
 const server = jsonServer.create()
-const router = jsonServer.router('./database.json')
+const router = jsonServer.router('./products_v2.json')
 const userdb = JSON.parse(fs.readFileSync('./users.json', 'UTF-8'))
 
 server.use(bodyParser.urlencoded({extended: true}))
@@ -30,15 +30,32 @@ function isAuthenticated({email, password}){
   return userdb.users.findIndex(user => user.email === email && user.password === password) !== -1
 }
 
+function mailExists(email){
+  return userdb.users.findIndex(user => user.email === email) !== -1
+}
+
+function getUserRole({email, password}) {
+  let user
+  let userIndex = userdb.users.findIndex(user => user.email === email && user.password === password)
+  if (userIndex == -1) {
+    console.log("pase 1")
+    return null
+  }
+  console.log("pase 2" + userIndex)
+  user = userdb.users[userIndex]
+  console.log("pase 3" + user.role)
+  return user.role
+}
+
 // Register New User
 server.post('/auth/register', (req, res) => {
   console.log("register endpoint called; request body:");
   console.log(req.body);
-  const {email, password} = req.body;
+  const {email, password, role} = req.body;
 
-  if(isAuthenticated({email, password}) === true) {
+  if(mailExists(email) === true) {
     const status = 401;
-    const message = 'Email and Password already exist';
+    const message = 'Ese Mail ya existe';
     res.status(status).json({status, message});
     return
   }
@@ -58,7 +75,7 @@ fs.readFile("./users.json", (err, data) => {
     var last_item_id = data.users[data.users.length-1].id;
 
     //Add new user
-    data.users.push({id: last_item_id + 1, email: email, password: password}); //add some data
+    data.users.push({id: last_item_id + 1, email: email, password: password, role: role}); //add some data
     var writeData = fs.writeFile("./users.json", JSON.stringify(data), (err, result) => {  // WRITE
         if (err) {
           const status = 401
@@ -70,7 +87,7 @@ fs.readFile("./users.json", (err, data) => {
 });
 
 // Create token for new user
-  const access_token = createToken({email, password})
+  const access_token = createToken({email, role})
   console.log("Access Token:" + access_token);
   res.status(200).json({access_token})
 })
@@ -82,11 +99,18 @@ server.post('/auth/login', (req, res) => {
   const {email, password} = req.body;
   if (isAuthenticated({email, password}) === false) {
     const status = 401
-    const message = 'Incorrect email or password'
+    const message = 'Mail y/o contraseña incorrectos'
     res.status(status).json({status, message})
     return
   }
-  const access_token = createToken({email, password})
+  const role = getUserRole({email, password})
+  if (!role) {
+  const status = 490
+  const message = 'No role' + role
+  res.status(status).json({status, message})
+    return
+  }
+  const access_token = createToken({email, role})
   console.log("Access Token:" + access_token);
   res.status(200).json({access_token})
 })
@@ -94,7 +118,7 @@ server.post('/auth/login', (req, res) => {
 server.use(/^(?!\/auth).*$/,  (req, res, next) => {
   if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
     const status = 401
-    const message = 'Error in authorization format'
+    const message = 'Acceso no autorizado'
     res.status(status).json({status, message})
     return
   }
@@ -104,14 +128,14 @@ server.use(/^(?!\/auth).*$/,  (req, res, next) => {
 
      if (verifyTokenResult instanceof Error) {
        const status = 401
-       const message = 'Access token not provided'
+       const message = 'Access token invalido'
        res.status(status).json({status, message})
        return
      }
      next()
   } catch (err) {
     const status = 401
-    const message = 'Error access_token is revoked'
+    const message = 'Access token invalido'
     res.status(status).json({status, message})
   }
 })

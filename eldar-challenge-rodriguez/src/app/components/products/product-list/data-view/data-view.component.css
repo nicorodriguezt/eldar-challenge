@@ -1,0 +1,18 @@
+.title-container {
+    display: flex;
+    align-items: center;
+    font-size: larger;
+    font-weight: 400;
+}
+
+:host ::ng-deep .p-dataview {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+:host ::ng-deep .p-paginator {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+}

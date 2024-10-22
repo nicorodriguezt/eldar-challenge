@@ -1,0 +1,22 @@
+.back-button-container {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.main-container {
+    height: calc(100vh - 70px);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 24px;
+    min-width: 550px;
+}
+
+.button-container {
+    text-align: center;
+}
+
+.max-width-form {
+    max-width: 80vw;
+}

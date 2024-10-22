@@ -1,0 +1,16 @@
+<app-nav-bar>
+    <div class="search-container">
+        <input class="w-full" type="search" pInputText [(ngModel)]="searchValue" placeholder="Search" />
+        <p-button label="Buscar" type="submit" (onClick)="searchProducts()" />
+    </div>
+</app-nav-bar>
+<div class="main-container">
+    @if (store.productList().length != 0) {
+    <app-data-view [products]="store.productList()" [productsSize]="store.productsSize()"
+        [canCreate]="authService.getUserRole() == 'admin'" [canEdit]="authService.getUserRole() == 'admin'"
+        (onCreateProduct)="createProduct()" (onEditProduct)="editProduct($event)" (onPageChanged)="pageChanged($event)">
+    </app-data-view>
+    } @else {
+    <div class="not-found-container">No se encontraron productos</div>
+    }
+</div>

@@ -1,0 +1,13 @@
+<div class="card">
+    <p-menubar>
+        <ng-template pTemplate="start" class="w-3">
+            <ng-content />
+        </ng-template>
+        <ng-template pTemplate="end">
+            <div class="nav-bar-end-container">
+                <span>{{authService.getUserName()}}</span>
+                <p-button icon="pi pi-sign-out" rounded="true" (onClick)="onLogoutClick()" />
+            </div>
+        </ng-template>
+    </p-menubar>
+</div>
