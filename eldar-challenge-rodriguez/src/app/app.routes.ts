@@ -5,6 +5,7 @@ import { ProductListComponent } from './components/products/product-list/product
 import { ProductDetailComponent } from './components/products/product-detail/product-detail.component';
 import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
+import { NotFoundComponent } from './components/shared/not-found/not-found.component';
 
 export const routes: Routes = [
 
@@ -35,8 +36,8 @@ export const routes: Routes = [
         ]
     },
     {
-        path: '',
-        redirectTo: 'products',
-        pathMatch: 'full'
+        path: '**', component: NotFoundComponent
+
     }
+    
 ];

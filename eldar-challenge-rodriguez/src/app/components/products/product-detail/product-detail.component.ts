@@ -51,23 +51,32 @@ export class ProductDetailComponent {
   );
 
   ngOnInit() {
-    if (this.id && !isNaN(parseInt(this.id))) {
-      this.productService.searchProductById(+this.id).subscribe({
-        next: (res) => {
-          if (!res.length) {
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Producto no encontrado' })
+    if (this.id) {
+      if (!isNaN(parseInt(this.id))) {
+        this.productService.searchProductById(+this.id).subscribe({
+          next: (res) => {
+            if (!res.length) {
+              this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Producto no encontrado' })
+              this.router.navigateByUrl('products')
+            } else {
+              this.selectedProduct.set(res[0])
+              this.setProductValues();
+            }
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al buscar el producto' })
             this.router.navigateByUrl('products')
-          } else {
-            this.selectedProduct.set(res[0])
-            this.setProductValues();
           }
-        },
-        error: (err) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al buscar el producto' })
-          this.router.navigateByUrl('products')
-        }
-      })
+        })
+      } else {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Id de producto incorrecto' })
+        this.router.navigateByUrl('products')
+      }
     }
+  }
+
+  productIdError() {
+    
   }
 
   goBack() {

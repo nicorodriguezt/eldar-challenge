@@ -1,10 +1,10 @@
-import { inject, Injectable } from '@angular/core';
-import { UserInfo } from '../interfaces/user-info';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Auth } from '../interfaces/auth';
-import { tap } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Auth } from '../interfaces/auth';
+import { UserInfo } from '../interfaces/user-info';
 import { ProductStore } from '../store/products.store';
 
 @Injectable({
@@ -16,15 +16,21 @@ export class AuthService {
   http = inject(HttpClient)
   store = inject(ProductStore)
 
-  token: string;
-  loggedUserInfo: UserInfo | null;
-  baseUrl = `${environment.apiUrl}/auth`;
+  private token: string;
+  private loggedUserInfo: UserInfo | null;
+  private baseUrl = `${environment.apiUrl}/auth`;
+  private loggedIn$ = new BehaviorSubject(false)
 
+
+  isLoggedIn() {
+    return this.loggedIn$.asObservable()
+  }
   constructor() {
     this.token = localStorage.getItem('token') ?? ''
     if (!this.token) {
       this.loggedUserInfo = null;
     }
+    this.loggedIn$.next(true)
     this.loggedUserInfo = this.decodeToken()
   }
 
@@ -73,6 +79,7 @@ export class AuthService {
       tap(res => {
         localStorage.setItem('token', res.access_token)
         this.token = res.access_token
+        this.loggedIn$.next(true)
         this.loggedUserInfo = this.decodeToken()
       })
     )
