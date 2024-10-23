@@ -17,23 +17,21 @@ export class AuthService {
   store = inject(ProductStore)
 
   private token: string;
-  private loggedUserInfo: UserInfo | null;
+  private loggedUserInfo: UserInfo | null = null;
   private baseUrl = `${environment.apiUrl}/auth`;
   private loggedIn$ = new BehaviorSubject(false)
 
+  constructor() {
+    this.token = localStorage.getItem('token') ?? ''
+    if (this.token) {
+      this.loggedIn$.next(true)
+      this.loggedUserInfo = this.decodeToken()
+    } 
+  }
 
   isLoggedIn() {
     return this.loggedIn$.asObservable()
   }
-  constructor() {
-    this.token = localStorage.getItem('token') ?? ''
-    if (!this.token) {
-      this.loggedUserInfo = null;
-    }
-    this.loggedIn$.next(true)
-    this.loggedUserInfo = this.decodeToken()
-  }
-
 
   getUserRole() {
     return this.loggedUserInfo?.role ?? ''
